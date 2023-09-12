@@ -1,0 +1,23 @@
+version: '3'
+services:
+  sht_main:
+    build:
+      context: .
+      dockerfile: main.Dockerfile
+    command: 'python main.py'
+    volumes:
+      - .:/app
+    depends_on:
+      - sht_mysql
+
+  sht_mysql:
+    image: mysql:8.0.29
+    restart: always
+    container_name: "sht_mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_init:/docker-entrypoint-initdb.d
+      - .mysql:/var/lib/mysql
