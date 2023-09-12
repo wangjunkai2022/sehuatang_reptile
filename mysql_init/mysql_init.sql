@@ -18,7 +18,7 @@ create table sehuatang.sht_data
     date      date    null comment '日期',
     tid       int          null comment '网站页面标识',
     fid       int          null comment '板块标识',
-    file_size varchar(5) null comment '文件大小'
+    file_size varchar(150) null comment '文件大小'
 );
 create table sehuatang.sht_images
 (
