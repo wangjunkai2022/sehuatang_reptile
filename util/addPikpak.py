@@ -7,10 +7,11 @@ import queue
 from util.log_util import log
 from util.config import date, pikpak_enable, pikpak_username, pikpak_pw, proxy_enable, proxy_url, fid_json
 
+
 class PikPak:
     client = PikPakApi(pikpak_username, pikpak_pw, proxy_enable and proxy_url or None)
 
-    async def downloads(self, datas, fid):
+    async def downloads(self, datas, fid, typeid=None):
         if not pikpak_enable or len(datas) < 1:
             return
         try:
@@ -21,6 +22,8 @@ class PikPak:
         for data in datas:
             log.info("pikpak 开启离线下载：{}".format(data["magnet"]))
             parent_path = os.path.join("sehuatang", fid_json.get(fid, "other"))
+            if data.get('type_name'):
+                parent_path = os.path.join(parent_path, data['type_name'])
             if '[无码破解]' in data['title']:
                 parent_path = os.path.join(parent_path, "无码破解")
             # parent_path = None

@@ -24,6 +24,8 @@ fid_value_list = [fid_json[key] for key in fid_json]
 page_num = get_config('page_num')
 page_start = get_config('page_start') or 1
 
+typeids = get_config('typeid')
+
 proxy = get_config('proxy')
 proxy_url = proxy.get('proxy_url')
 proxy_enable = proxy.get('proxy_enable')

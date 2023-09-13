@@ -20,13 +20,26 @@ from util.config import (
     tg_enable,
     proxy,
     pikpak_enable,
+    typeids,
 )
 
 from util.addPikpak import PikPak
 
 
+async def get_plate_info_main(fid: int, page: int, proxy: str, date_tim):
+    if typeids.get(fid, None):
+        keys = [key for key in typeids[fid]]
+        info_list, tid_list = [], []
+        for type_id in keys:
+            info_list_, tid_list_ = await get_plate_info(fid, page, proxy, date_tim, type_id)
+            info_list = info_list + info_list_
+            tid_list = tid_list + tid_list_
+        return info_list, tid_list
+    return await get_plate_info(fid, page, proxy, date_tim)
+
+
 # 获取帖子的id(访问板块)
-async def get_plate_info(fid: int, page: int, proxy: str, date_time):
+async def get_plate_info(fid: int, page: int, proxy: str, date_time, typeid: int = None):
     """
     :param fid: 板块id
     :param page: 页码
@@ -47,6 +60,15 @@ async def get_plate_info(fid: int, page: int, proxy: str, date_time):
         "fid": fid,
         "page": page,
     }
+
+    # if not typeid and typeids[fid]:
+    #     keys = [key for key in typeids[fid]]
+    #     for type_id in keys:
+    #         await get_plate_info(fid, page, proxy, date_tim, type_id)
+    #     return
+    if typeid:
+        params['filter'] = 'typeid'
+        params['typeid'] = typeid
 
     # 存放字典的列表
     info_list = []
@@ -85,6 +107,8 @@ async def get_plate_info(fid: int, page: int, proxy: str, date_time):
             data["title"] = title
             data["date"] = date
             data["tid"] = id
+            if typeid:
+                data["type_name"] = typeids[fid][typeid]
             info_list.append(data)
             tid_list.append(id)
         log.debug("Crawl the plate " + str(fid) + " page number " + str(page))
@@ -164,7 +188,7 @@ async def get_page(tid, proxy, f_info):
 async def crawler(fid):
     start_time = time.time()
     tasks = [
-        get_plate_info(fid, page, proxy, date()) for page in range(page_start, page_num + page_start)
+        get_plate_info_main(fid, page, proxy, date()) for page in range(page_start, page_num + page_start)
     ]
     # 开始执行协程
     results = await asyncio.gather(*tasks)
@@ -206,6 +230,7 @@ async def crawler(fid):
         data["title"] = i["title"]
         data["date"] = i["date"]
         data["tid"] = i["tid"]
+        data['type_name'] = i.get('type_name')
         post_time = data["post_time"]
         # 再次匹配发布时间（因为上级页面获取的时间可能不准确）
         if re.match("^" + date(), post_time):

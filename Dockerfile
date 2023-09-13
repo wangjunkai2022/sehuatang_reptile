@@ -2,7 +2,7 @@ FROM mysql:8.0-debian as build
 ENV MYSQL_ROOT_PASSWORD=root
 RUN \
     apt-get -y update && apt-get -y upgrade \
-    && apt install -y --no-install-recommends python3 python3-pip git \
+    && apt-get install -y --no-install-recommends python3 python3-pip git \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get autoremove --purge -y \
     && apt-get clean && apt-get autoclean \
@@ -14,6 +14,7 @@ RUN \
     && chmod -R 777 /app \
     && cp /app/mysql_init/mysql_init.sql /docker-entrypoint-initdb.d
 
+VOLUME [ "/config" ]
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
 
 #EXPOSE 3306 33060
