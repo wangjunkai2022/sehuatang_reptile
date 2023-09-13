@@ -262,12 +262,12 @@ async def crawler(fid):
 
 
 async def main():
-    log.debug(f"日期: {date()}")
+    log.debug("日期: {}".format(time.strftime("%Y-%m-%d", time.localtime())))
 
     for fid in fid_list:
         await crawler(fid)
 
-    log.debug(f"完毕：：日期: {date()}")
+    log.debug("完毕：：日期: {}".format(time.strftime("%Y-%m-%d", time.localtime())))
 
 
 if __name__ == "__main__":

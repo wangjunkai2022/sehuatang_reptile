@@ -1,9 +1,7 @@
-import json
 import os
 
 from pikpakapi import PikPakApi
 import asyncio
-import queue
 from util.log_util import log
 from util.config import date, pikpak_enable, pikpak_username, pikpak_pw, proxy_enable, proxy_url, fid_json
 
@@ -19,25 +17,34 @@ class PikPak:
         except Exception:
             log.error("pikpak 登陆失败")
 
+        parent_paths = {}
         for data in datas:
-            log.info("pikpak 开启离线下载：{}".format(data["magnet"]))
-            parent_path = os.path.join("sehuatang", fid_json.get(fid, "other"))
-            if data.get('type_name'):
-                parent_path = os.path.join(parent_path, data['type_name'])
-            if '[无码破解]' in data['title']:
-                parent_path = os.path.join(parent_path, "无码破解")
-            # parent_path = None
             try:
-                paths = await self.client.path_to_id(parent_path, True)
-                path_id = paths[len(paths) - 1]["id"]
-                await self.client.offline_download(
+                parent_path = os.path.join("sehuatang", fid_json.get(fid, "other"))
+                if data.get('type_name'):
+                    parent_path = os.path.join(parent_path, data['type_name'])
+                if '[无码破解]' in data['title']:
+                    parent_path = os.path.join(parent_path, "无码破解")
+                path_id = parent_paths.get(parent_path, None)
+                if path_id:
+                    pass
+                else:
+                    paths = await asyncio.wait_for(self.client.path_to_id(parent_path, True), timeout=10000)
+                    path_id = paths[len(paths) - 1].get("id", None)
+                    parent_paths[parent_path] = path_id
+
+                log.info("pikpak 开启离线下载：{}".format(data["magnet"], ))
+                task = self.client.offline_download(
                     data["magnet"],
                     path_id,
                 )
-                log.info("pikpak 保存成功：{}".format(data["magnet"]))
+                await asyncio.wait_for(task, timeout=10000)
+
+                log.info("pikpak 保存成功：{} 保存路径：{}".format(data["title"], parent_path))
                 data['save_pikpak'] = parent_path
             except Exception:
-                log.error("pikpak 离线下载失败 :{}".format(data["magnet"]))
+                log.error("pikpak 离线下载失败 :{}".format(data))
+                # await asyncio.sleep(30)
 
 
 if __name__ == "__main__":

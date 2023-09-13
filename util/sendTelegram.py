@@ -79,8 +79,8 @@ def send_media_group(data_list, fid):
             content = f"\n{num} {title}\n\n磁力链接：\n{magnet}\n\n【影片容量】：{file_size}\n\n发布时间：{post_time}\n\n #{tag_name}"
         else:
             content = f"\n{num} {title}\n\n磁力链接：\n{magnet}\n防115屏蔽压缩包磁链：\n{magnet_115}\n\n【影片容量】：{file_size}\n\n发布时间：{post_time}\n\n #{tag_name}"
-        if data['save_pikpak']:
-            content = content + f"\n\n保存到PikPak路径：\n{data['save_pikpak']}\n下"
+        if data.get('save_pikpak'):
+            content = content + f"\n\n保存到PikPak路径：\n{data.get('save_pikpak')}\n下"
         content = special_char_sub(content)
         media_group = []
         for image in image_list:
