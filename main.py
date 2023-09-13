@@ -254,7 +254,7 @@ async def crawler(fid):
 
     if tg_enable:
         send_media_group(data_list, fid)
-        
+
     if len(data_list) > 0:
         return rec_message(data_list, fid)
     else:
@@ -266,6 +266,8 @@ async def main():
 
     for fid in fid_list:
         await crawler(fid)
+
+    log.debug(f"完毕：：日期: {date()}")
 
 
 if __name__ == "__main__":

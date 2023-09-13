@@ -76,27 +76,27 @@ class TNLog(object):
 
     def info(self, message):
         message = self.getLogMessage("info", message)
-
+        print(message)
         self.__loggers[logging.INFO].info(message)
 
     def error(self, message):
         message = self.getLogMessage("error", message)
-
+        print(message)
         self.__loggers[logging.ERROR].error(message)
 
     def warning(self, message):
         message = self.getLogMessage("warning", message)
-
+        print(message)
         self.__loggers[logging.WARNING].warning(message)
 
     def debug(self, message):
         message = self.getLogMessage("debug", message)
-
+        print(message)
         self.__loggers[logging.DEBUG].debug(message)
 
     def critical(self, message):
         message = self.getLogMessage("critical", message)
-
+        print(message)
         self.__loggers[logging.CRITICAL].critical(message)
 
 
