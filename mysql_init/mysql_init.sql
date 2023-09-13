@@ -9,8 +9,7 @@ create database sehuatang default character set utf8mb4 collate utf8mb4_unicode_
 #创建表
 create table sehuatang.sht_data
 (
-    id        int auto_increment comment 'id'
-        primary key,
+    id        int auto_increment comment 'id' primary key,
     magnet    varchar(150)  null comment '磁力链接',
     number    varchar(200)  null comment '番号',
     title     varchar(200) null comment '标题',

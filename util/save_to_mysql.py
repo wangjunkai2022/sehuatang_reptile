@@ -22,7 +22,6 @@ class SaveToMysql:
         self.db = self.config["db"]
         self.conn = pymysql.connect(host=self.host, port=self.port, user=self.user, password=self.password, db=self.db)
         self.cursor = self.conn.cursor()
-        self.newDatas = []
 
     def show_table(self):
         res = self.cursor.execute("show tables")
@@ -45,7 +44,6 @@ class SaveToMysql:
             log.info("mysql 未存入新数据")
             return
         try:
-            magents = ""
             for data in data_list:
                 sql = "insert into " + 'sht_data' + "(magnet, number, title, post_time, date, tid, fid, file_size) values (%s, " \
                                                     "%s, %s, %s, %s, %s, %s, %s) "
@@ -57,17 +55,6 @@ class SaveToMysql:
                 sql = "insert into " + 'sht_images' + " (sht_data_id, image_url) values (%s, %s)"
                 for image_url in data["img"]:
                     self.cursor.execute(sql, (id, image_url))
-                if '[无码破解]' in data['title']:
-                    pass
-                else:
-                    # file_path = os.path.join(magnet, "{}.txt".format(fid))
-                    # with open(file_path, "a" if os.path.exists(file_path) else "w") as file:
-                    #     # 将字符串写入文件
-                    #     file.write(data["magnet"] + "\n")
-                    # temp_data = copy.deepcopy(data)
-                    # temp_data["fid"] = fid
-                    # pikpak.addDownload(temp_data)
-                    self.newDatas.append(data)
             self.conn.commit()
             log.info("mysql 保存数据成功, 共存入数据库 %s 条" % len(data_list))
         except Exception as e:

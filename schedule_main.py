@@ -15,7 +15,7 @@ def get_schedule_time():
 def run_schedule():
     time_list = get_schedule_time()
     for i in time_list:
-        schedule.every().day.at(i).do(asyncio.run(main()))
+        schedule.every().day.at(i).do(asyncio.run, main)
     asyncio.run(main())
     while True:
         schedule.run_pending()

@@ -7,7 +7,6 @@ import queue
 from util.log_util import log
 from util.config import date, pikpak_enable, pikpak_username, pikpak_pw, proxy_enable, proxy_url, fid_json
 
-
 class PikPak:
     client = PikPakApi(pikpak_username, pikpak_pw, proxy_enable and proxy_url or None)
 
@@ -22,6 +21,8 @@ class PikPak:
         for data in datas:
             log.info("pikpak 开启离线下载：{}".format(data["magnet"]))
             parent_path = os.path.join("sehuatang", fid_json.get(fid, "other"))
+            if '[无码破解]' in data['title']:
+                parent_path = os.path.join(parent_path, "无码破解")
             # parent_path = None
             try:
                 paths = await self.client.path_to_id(parent_path, True)
@@ -31,6 +32,7 @@ class PikPak:
                     path_id,
                 )
                 log.info("pikpak 保存成功：{}".format(data["magnet"]))
+                data['save_pikpak'] = parent_path
             except Exception:
                 log.error("pikpak 离线下载失败 :{}".format(data["magnet"]))
 

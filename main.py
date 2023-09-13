@@ -19,6 +19,7 @@ from util.config import (
     mysql_enable,
     tg_enable,
     proxy,
+    pikpak_enable,
 )
 
 from util.addPikpak import PikPak
@@ -215,9 +216,10 @@ async def crawler(fid):
         mysql = SaveToMysql()
         data_list_new = mysql.filter_data(data_list, fid)
         mysql.save_data(data_list_new, fid)
+        if pikpak_enable:
+            pikpak = PikPak()
+            await pikpak.downloads(data_list_new, fid)
         mysql.close()
-        pikpak = PikPak()
-        await pikpak.downloads(mysql.newDatas, fid)
     if mongodb_enable:
         data_list_new = filter_data(data_list, fid)
         save_data(data_list_new, fid)
