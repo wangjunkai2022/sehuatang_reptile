@@ -237,19 +237,24 @@ async def crawler(fid):
             data_list.append(data)
     log.info("本次抓取的数据条数为：" + str(len(data_list)))
     log.info("开始写入数据库")
+
     if mysql_enable:
         mysql = SaveToMysql()
-        data_list_new = mysql.filter_data(data_list, fid)
-        mysql.save_data(data_list_new, fid)
-        if pikpak_enable:
-            pikpak = PikPak()
-            await pikpak.downloads(data_list_new, fid)
+        data_list = mysql.filter_data(data_list, fid)
+        mysql.save_data(data_list, fid)
         mysql.close()
-    if mongodb_enable:
-        data_list_new = filter_data(data_list, fid)
-        save_data(data_list_new, fid)
+
+    if pikpak_enable:
+        pikpak = PikPak()
+        await pikpak.downloads(data_list, fid)
+
+    # if mongodb_enable:
+    #     data_list_new = filter_data(data_list, fid)
+    #     save_data(data_list_new, fid)
+
     if tg_enable:
         send_media_group(data_list, fid)
+        
     if len(data_list) > 0:
         return rec_message(data_list, fid)
     else:
