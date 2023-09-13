@@ -42,8 +42,8 @@ class PikPak:
 
                 log.info("pikpak 保存成功：{} 保存路径：{}".format(data["title"], parent_path))
                 data['save_pikpak'] = parent_path
-            except Exception:
-                log.error("pikpak 离线下载失败 :{}".format(data))
+            except Exception as e:
+                log.error("pikpak 离线下载失败 error:{}\ndata:{}".format(e, data))
                 # await asyncio.sleep(30)
 
 
