@@ -20,7 +20,7 @@ sehuatang:
   cookie: "cPNj_2132_saltkey=jPh8px1f; _safe=vqd37pjm4p5uodq339yzk6b7jdt6oich"
   # 板块id
   fid:
-#    103: 高清中文字幕
+    103: 高清中文字幕
     #    104: 素人有码系列
     #    37: 亚洲有码原创
     36: 亚洲无码原创
@@ -38,8 +38,8 @@ sehuatang:
       481: 无码高清
 
 
-  # 抓取页数，10代表1-10页
-  page_num: 10
+  # 抓取页数，10代表page_start-10 + page_start页
+  page_num: 1
   # 抓取开始页数，如果为空则是第一页开始 不能设置小于等于0
   page_start: 1
   # 抓取日期(格式: yyyy-mm-dd), 如果为空, 则抓取当前日期，支持正则匹配，可输入 yyyy-mm 抓取指定月份的所有日期

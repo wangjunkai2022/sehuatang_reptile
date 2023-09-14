@@ -95,9 +95,9 @@ async def get_plate_info(fid: int, page: int, proxy: str, date_time, typeid: int
             if date_span is not None:
                 date = date_span.attrs["title"]
             else:
-                flag = date_td_em.get_text().startswith(date_time)
-                if flag:
-                    date = date_td_em.get_text()
+                time_ = re.search("^" + date_time, date_td_em.get_text())
+                if time_:
+                    date = time_.group()
                 else:
                     continue
             if date is None:
