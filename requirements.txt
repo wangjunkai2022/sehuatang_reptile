@@ -10,4 +10,3 @@ pymysql~=1.0.2
 schedule~=1.1.0
 pyTelegramBotAPI~=4.10.0
 cryptography~=41.0.3
-pikpakapi~=0.1.1
