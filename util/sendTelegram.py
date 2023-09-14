@@ -103,8 +103,9 @@ def send_media_group(data_list, fid):
             else:
                 media_group.append(InputMediaPhoto(media=image))
         # log.debug(media_group.values().__str__())
-        msg = antiflood(bot.send_media_group, chat_id=tg_chat_id, media=media_group)
+        msg = '消息返回值'
         try:
+            msg = antiflood(bot.send_media_group, chat_id=tg_chat_id, media=media_group)
             log.info(
                 f"send_media_group, msg id: {' '.join([str(i.json.get('message_id')) for i in msg])}"
             )
