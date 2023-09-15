@@ -18,7 +18,9 @@ class PikPak:
             log.error("pikpak 登陆失败")
 
         parent_paths = {}
-        for data in datas:
+        for index in range(len(datas) - 1, -1, -1):
+            data = datas[index]
+        # for data in datas[:]:
             try:
                 parent_path = os.path.join("sehuatang", fid_json.get(fid, "other"))
                 if data.get('type_name'):
@@ -44,6 +46,8 @@ class PikPak:
                 data['save_pikpak'] = parent_path
             except Exception as e:
                 log.error("pikpak 离线下载失败 error:{}\ndata:{}".format(e, data))
+                # datas.remove(data)
+                datas.pop(index)
                 # await asyncio.sleep(30)
 
 
