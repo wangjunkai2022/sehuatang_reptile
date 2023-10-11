@@ -32,12 +32,13 @@ from util.addPikpak import PikPak
 async def get_plate_info_main(fid: int, page: int, proxy: str, date_tim):
     if typeids.get(fid, None):
         keys = [key for key in typeids[fid]]
-        info_list, tid_list = [], []
-        for type_id in keys:
-            info_list_, tid_list_ = await get_plate_info(fid, page, proxy, date_tim, type_id)
-            info_list = info_list + info_list_
-            tid_list = tid_list + tid_list_
-            await deletime()
+        tasks = [get_plate_info(fid, page, proxy, date_tim, type_id) for type_id in keys]
+        # for type_id in keys:
+        #     info_list_, tid_list_ = await get_plate_info(fid, page, proxy, date_tim, type_id)
+        #     info_list = info_list + info_list_
+        #     tid_list = tid_list + tid_list_
+        #     await deletime()
+        info_list, tid_list = await deletime_tasks(tasks)
         return info_list, tid_list
     return await get_plate_info(fid, page, proxy, date_tim)
 
@@ -201,19 +202,24 @@ async def deletime():
         index = 0
 
 
+async def deletime_tasks(tasks):
+    results = []
+    if deletime_enable and len(tasks) > deletime_num:
+        results_2 = [tasks[i:i + deletime_num] for i in range(0, len(tasks), deletime_num)]
+        for tasks_ in results_2:
+            results += await asyncio.gather(*tasks_)
+            await asyncio.sleep(deletime_time)
+    else:
+        return await asyncio.gather(*tasks)
+    return results
+
 async def crawler(fid):
     start_time = time.time()
-    # tasks = [
-    #     get_plate_info_main(fid, page, proxy, date()) for page in range(page_start, page_num + page_start)
-    # ]
-    # # 开始执行协程
-    # results = await asyncio.gather(*tasks)
-    results = []
-    for page in range(page_start, page_num + page_start):
-        result = await get_plate_info_main(fid, page, proxy, date())
-        results.append(result)
-        await deletime()
-
+    tasks = [
+        get_plate_info_main(fid, page, proxy, date()) for page in range(page_start, page_num + page_start)
+    ]
+    # 开始执行协程
+    results = await deletime_tasks(tasks)
     end_time = time.time()
     log.info("get_plate_info 执行时间：" + str(end_time - start_time))
 
@@ -241,13 +247,9 @@ async def crawler(fid):
 
     data_list = []
     start_time = time.time()
-    # tasks = [get_page(i["tid"], proxy, i) for i in info_list_new]
+    tasks = [get_page(i["tid"], proxy, i) for i in info_list_new]
     # results = await asyncio.gather(*tasks)
-    results = []
-    for i in info_list_new:
-        result = await get_page(i["tid"], proxy, i)
-        results.append(result)
-        await deletime()
+    results = await deletime_tasks(tasks)
 
     end_time = time.time()
     log.info("get_page 执行时间：" + str(end_time - start_time))
