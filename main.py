@@ -33,15 +33,11 @@ async def get_plate_info_main(fid: int, page: int, proxy: str, date_tim):
     if typeids.get(fid, None):
         keys = [key for key in typeids[fid]]
         info_list, tid_list = [], []
-        index = 0
         for type_id in keys:
             info_list_, tid_list_ = await get_plate_info(fid, page, proxy, date_tim, type_id)
             info_list = info_list + info_list_
             tid_list = tid_list + tid_list_
-            index = index + 1
-            if deletime_enable and index > deletime_num:
-                index = 0
-                await asyncio.sleep(deletime_time)
+            await deletime()
         return info_list, tid_list
     return await get_plate_info(fid, page, proxy, date_tim)
 
@@ -193,13 +189,29 @@ async def get_page(tid, proxy, f_info):
         log.error(e)
 
 
+index = 0
+
+
+async def deletime():
+    global index
+    index = index + 1
+    if deletime_enable and index > deletime_num:
+        log.info(f"抓取完{deletime_num}个等待{deletime_time}秒")
+        await asyncio.sleep(deletime_time)
+        index = 0
+
+
 async def crawler(fid):
     start_time = time.time()
-    tasks = [
-        get_plate_info_main(fid, page, proxy, date()) for page in range(page_start, page_num + page_start)
-    ]
-    # 开始执行协程
-    results = await asyncio.gather(*tasks)
+    # tasks = [
+    #     get_plate_info_main(fid, page, proxy, date()) for page in range(page_start, page_num + page_start)
+    # ]
+    # # 开始执行协程
+    # results = await asyncio.gather(*tasks)
+    for page in range(page_start, page_num + page_start):
+        await get_plate_info_main(fid, page, proxy, date())
+        await deletime()
+
     end_time = time.time()
     log.info("get_plate_info 执行时间：" + str(end_time - start_time))
 
@@ -229,12 +241,9 @@ async def crawler(fid):
     start_time = time.time()
     # tasks = [get_page(i["tid"], proxy, i) for i in info_list_new]
     # results = await asyncio.gather(*tasks)
-    index = 0
     for i in info_list_new:
         await get_page(i["tid"], proxy, i)
-        index = index + 1
-        if deletime_enable and index > deletime_num:
-            await asyncio.sleep(deletime_time)
+        await deletime()
 
     end_time = time.time()
     log.info("get_page 执行时间：" + str(end_time - start_time))
