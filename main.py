@@ -21,6 +21,9 @@ from util.config import (
     proxy,
     pikpak_enable,
     typeids,
+    deletime_enable,
+    deletime_num,
+    deletime_time,
 )
 
 from util.addPikpak import PikPak
@@ -30,10 +33,15 @@ async def get_plate_info_main(fid: int, page: int, proxy: str, date_tim):
     if typeids.get(fid, None):
         keys = [key for key in typeids[fid]]
         info_list, tid_list = [], []
+        index = 0
         for type_id in keys:
             info_list_, tid_list_ = await get_plate_info(fid, page, proxy, date_tim, type_id)
             info_list = info_list + info_list_
             tid_list = tid_list + tid_list_
+            index = index + 1
+            if deletime_enable and index > deletime_num:
+                index = 0
+                await asyncio.sleep(deletime_time)
         return info_list, tid_list
     return await get_plate_info(fid, page, proxy, date_tim)
 
@@ -219,8 +227,15 @@ async def crawler(fid):
 
     data_list = []
     start_time = time.time()
-    tasks = [get_page(i["tid"], proxy, i) for i in info_list_new]
-    results = await asyncio.gather(*tasks)
+    # tasks = [get_page(i["tid"], proxy, i) for i in info_list_new]
+    # results = await asyncio.gather(*tasks)
+    index = 0
+    for i in info_list_new:
+        await get_page(i["tid"], proxy, i)
+        index = index + 1
+        if deletime_enable and index > deletime_num:
+            await asyncio.sleep(deletime_time)
+
     end_time = time.time()
     log.info("get_page 执行时间：" + str(end_time - start_time))
     results_new = [i for i in results if i is not None]
@@ -250,7 +265,7 @@ async def crawler(fid):
     if mysql_enable:
         mysql.save_data(data_list, fid)
         mysql.close()
-        
+
     # if mongodb_enable:
     #     data_list_new = filter_data(data_list, fid)
     #     save_data(data_list_new, fid)
