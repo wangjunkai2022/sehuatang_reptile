@@ -196,7 +196,7 @@ async def deletime():
     global index
     index = index + 1
     if deletime_enable and index > deletime_num:
-        log.info(f"抓取完{deletime_num}个等待{deletime_time}秒")
+        log.info(f"抓取完{deletime_num}个 现在等待{deletime_time}秒")
         await asyncio.sleep(deletime_time)
         index = 0
 
@@ -208,8 +208,10 @@ async def crawler(fid):
     # ]
     # # 开始执行协程
     # results = await asyncio.gather(*tasks)
+    results = []
     for page in range(page_start, page_num + page_start):
-        await get_plate_info_main(fid, page, proxy, date())
+        result = await get_plate_info_main(fid, page, proxy, date())
+        results.append(result)
         await deletime()
 
     end_time = time.time()
@@ -241,8 +243,10 @@ async def crawler(fid):
     start_time = time.time()
     # tasks = [get_page(i["tid"], proxy, i) for i in info_list_new]
     # results = await asyncio.gather(*tasks)
+    results = []
     for i in info_list_new:
-        await get_page(i["tid"], proxy, i)
+        result = await get_page(i["tid"], proxy, i)
+        results.append(result)
         await deletime()
 
     end_time = time.time()
