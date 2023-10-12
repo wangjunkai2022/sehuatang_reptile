@@ -48,7 +48,7 @@ class PikPak:
                 log.error("pikpak 离线下载失败 error:{}\ndata:{}".format(e, data))
                 # datas.remove(data)
                 datas.pop(index)
-                # await asyncio.sleep(30)
+                await asyncio.sleep(60)
 
 
 if __name__ == "__main__":
