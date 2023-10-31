@@ -95,16 +95,16 @@ def compare_data(data_list, id_list):
 
 
 # 筛选不存在的tids
-def compare_tid(tid_list, fid, info_list):
+def compare_tid(fid, info_list):
     collection_name = get_plate_name(fid)
     id_list = find_data_tid(collection_name, date())
     log.info("collection_name: {}".format(collection_name))
     log.info(f"mongodb 查询到{len(id_list)}条数据, id为：{' '.join(id_list)}")
 
     tid_list_new = []
-    for i in tid_list:
-        if i not in id_list:
-            tid_list_new.append(i)
+    for data in info_list:
+        if data.tid not in id_list:
+            tid_list_new.append(data.tid)
 
     temp = []
     for item in tid_list_new:

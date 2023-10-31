@@ -27,19 +27,33 @@ from util.config import (
 )
 
 from util.addPikpak import PikPak
+from util.async_util import *
+
+class SeHuaData:
+    number = None
+    title = None
+    date = None
+    tid = None
+    type_name = None
+    fid = None
 
 
 async def get_plate_info_main(fid: int, page: int, proxy: str, date_tim):
     if typeids.get(fid, None):
         keys = [key for key in typeids[fid]]
-        tasks = [get_plate_info(fid, page, proxy, date_tim, type_id) for type_id in keys]
+        tasks = [*(get_plate_info(fid, page, proxy, date_tim, type_id)
+                 for type_id in keys)]
         # for type_id in keys:
         #     info_list_, tid_list_ = await get_plate_info(fid, page, proxy, date_tim, type_id)
         #     info_list = info_list + info_list_
         #     tid_list = tid_list + tid_list_
         #     await deletime()
-        info_list, tid_list = await deletime_tasks(tasks)
-        return info_list, tid_list
+        results = await deletime_tasks(tasks)
+        result = []
+        for value in results:
+            result += value
+        return result
+
     return await get_plate_info(fid, page, proxy, date_tim)
 
 
@@ -77,7 +91,6 @@ async def get_plate_info(fid: int, page: int, proxy: str, date_time, typeid: int
 
     # 存放字典的列表
     info_list = []
-    tid_list = []
 
     async with httpx.AsyncClient(proxies=proxy) as client:
         response = await client.get(url, params=params, headers=headers)
@@ -87,7 +100,8 @@ async def get_plate_info(fid: int, page: int, proxy: str, date_time, typeid: int
     all = soup.find_all(id=re.compile("^normalthread_"))
     try:
         for i in all:
-            data = {}
+            data = SeHuaData()
+            data.fid = fid
             title_list = i.find("a", class_="s xst").get_text().split(" ")
             number = title_list[0]
             title_list.pop(0)
@@ -108,19 +122,17 @@ async def get_plate_info(fid: int, page: int, proxy: str, date_time, typeid: int
             if date is None:
                 continue
             id = i.find(class_="showcontent y").attrs["id"].split("_")[1]
-            data["number"] = number
-            data["title"] = title
-            data["date"] = date
-            data["tid"] = id
+            data.number = number
+            data.title = title
+            data.date = date
+            data.tid = id
             if typeid:
-                data["type_name"] = typeids[fid][typeid]
+                data.type_name = typeids[fid][typeid]
             info_list.append(data)
-            tid_list.append(id)
         log.debug("Crawl the plate " + str(fid) + " page number " + str(page))
-        log.debug(" ".join(tid_list))
     except Exception as e:
         log.error(e)
-    return info_list, tid_list
+    return info_list
 
 
 # 访问每个帖子的页面
@@ -182,6 +194,7 @@ async def get_page(tid, proxy, f_info):
         data["magnet"] = magnet
         data["magnet_115"] = magnet_115
         data["file_size"] = file_size
+        data['url'] = url
         log.debug("Crawl the page " + tid)
         log.debug(data.values())
         return data, f_info
@@ -189,34 +202,10 @@ async def get_page(tid, proxy, f_info):
         log.error("Crawl the page " + tid + " failed.")
         log.error(e)
 
-
-index = 0
-
-
-async def deletime():
-    global index
-    index = index + 1
-    if deletime_enable and index > deletime_num:
-        log.info(f"抓取完{deletime_num}个 现在等待{deletime_time}秒")
-        await asyncio.sleep(deletime_time)
-        index = 0
-
-
-async def deletime_tasks(tasks):
-    results = []
-    if deletime_enable and len(tasks) > deletime_num:
-        results_2 = [tasks[i:i + deletime_num] for i in range(0, len(tasks), deletime_num)]
-        for tasks_ in results_2:
-            results += await asyncio.gather(*tasks_)
-            await asyncio.sleep(deletime_time)
-    else:
-        return await asyncio.gather(*tasks)
-    return results
-
 async def crawler(fid):
     start_time = time.time()
     tasks = [
-        get_plate_info_main(fid, page, proxy, date()) for page in range(page_start, page_num + page_start)
+        *(get_plate_info_main(fid, page, proxy, date()) for page in range(page_start, page_num + page_start))
     ]
     # 开始执行协程
     results = await deletime_tasks(tasks)
@@ -225,29 +214,24 @@ async def crawler(fid):
 
     # 将结果拼接
     info_list_all = []
-    tid_list_all = []
     for result in results:
-        info_list, tid_list = result
-        info_list_all.extend(info_list)
-        tid_list_all.extend(tid_list)
-    log.info("即将开始爬取的页面 " + " ".join(tid_list_all))
+        info_list_all += result
+
+    log.info("即将开始爬取的页面 " + " ".join([data.tid for data in info_list_all]))
     if mongodb_enable:
         log.info("mongodb_enable is True")
-        tid_list_new, info_list_new = compare_tid(tid_list_all, fid, info_list_all)
+        tid_list_new, info_list_new = compare_tid(fid, info_list_all)
     elif mysql_enable:
         mysql = SaveToMysql()
-        tid_list_new, info_list_new = mysql.compare_tid(
-            tid_list_all, fid, info_list_all
-        )
+        tid_list_new, info_list_new = mysql.compare_tid(fid, info_list_all)
         mysql.close()
     else:
-        tid_list_new = tid_list_all
         info_list_new = info_list_all
-    log.info("需要爬取的页面 " + " ".join(tid_list_new))
+    log.info("需要爬取的页面 " + " ".join([data.tid for data in info_list_new]))
 
     data_list = []
     start_time = time.time()
-    tasks = [get_page(i["tid"], proxy, i) for i in info_list_new]
+    tasks = [get_page(i.tid, proxy, i) for i in info_list_new]
     # results = await asyncio.gather(*tasks)
     results = await deletime_tasks(tasks)
 
@@ -256,11 +240,11 @@ async def crawler(fid):
     results_new = [i for i in results if i is not None]
     for result in results_new:
         data, i = result
-        data["number"] = i["number"]
-        data["title"] = i["title"]
-        data["date"] = i["date"]
-        data["tid"] = i["tid"]
-        data['type_name'] = i.get('type_name')
+        data["number"] = i.number
+        data["title"] = i.title
+        data["date"] = i.date
+        data["tid"] = i.tid
+        data['type_name'] = i.type_name
         post_time = data["post_time"]
         # 再次匹配发布时间（因为上级页面获取的时间可能不准确）
         if re.match("^" + date(), post_time):
