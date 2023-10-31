@@ -72,7 +72,7 @@ class SaveToMysql:
 
         info_list_new = []
         for info in info_list:
-            if info["tid"] in tid_list_new:
+            if info.tid in tid_list_new:
                 info_list_new.append(info)
 
         return tid_list_new, info_list_new
