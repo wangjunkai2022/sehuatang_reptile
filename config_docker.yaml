@@ -79,7 +79,7 @@ sendMessage:
   tg_chat_id: 5469426795
 
 pikpak:
-  enable: true
+  enable: false
   #  username: 'xiaokaiunity2022@outlook.com'
   #  password: 'Xiaokai2022'
   username: himiren433@picvw.com # 邀请码 85147854
