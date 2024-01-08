@@ -10,6 +10,7 @@ from util.async_util import *
 
 checkCount = 10
 
+timeout_time = 5
 
 class PikPak:
     client = PikPakApi(pikpak_username, pikpak_pw,
@@ -19,7 +20,7 @@ class PikPak:
 
     async def get_path_id(self, parent_path):
         try:
-            paths = await asyncio.wait_for(self.client.path_to_id(parent_path, True), timeout=50000)
+            paths = await asyncio.wait_for(self.client.path_to_id(parent_path, True), timeout=timeout_time)
             path_id = paths[len(paths) - 1].get("id", None)
             return path_id
         except:
@@ -68,9 +69,9 @@ class PikPak:
             path_id = await self.get_path_id(seave_path)
             # paths = await asyncio.wait_for(
             #     self.client.path_to_id(
-            #         seave_path, True), timeout=10000)
+            #         seave_path, True), timeout=timeout_time)
             # path_id = paths[len(paths) - 1].get("id", None)
-            # paths = await asyncio.wait_for(self.client.create_folder(name=title, parent_id=path_id), timeout=10000)
+            # paths = await asyncio.wait_for(self.client.create_folder(name=title, parent_id=path_id), timeout=timeout_time)
             # path_id = paths.get("file").get("id")
 
             log.info("pikpak 开启离线下载：\nmagnet:{}\ntitle:{}".format(
@@ -79,7 +80,7 @@ class PikPak:
                 data["magnet"],
                 path_id,
             )
-            result = await asyncio.wait_for(task, timeout=10000)
+            result = await asyncio.wait_for(task, timeout=timeout_time)
 
             log.info("pikpak 保存中：{} 保存路径：{} \n 离线任务：{}".format(
                 title, seave_path, result))
@@ -89,7 +90,7 @@ class PikPak:
             while True:
                 status_count += 1
                 task = self.client.get_task_status(task_id, file_id)
-                result = await asyncio.wait_for(task, timeout=10000)
+                result = await asyncio.wait_for(task, timeout=timeout_time)
                 print("{} 的 下载状态：{}".format(data["title"], result))
                 if DownloadStatus.done == result or DownloadStatus.not_found == result:
                     break
@@ -136,13 +137,13 @@ class PikPak:
         #         if path_id:
         #             pass
         #         else:
-        #             paths = await asyncio.wait_for(self.client.path_to_id(parent_path, True), timeout=10000)
+        #             paths = await asyncio.wait_for(self.client.path_to_id(parent_path, True), timeout=timeout_time)
         #             path_id = paths[len(paths) - 1].get("id", None)
         #             self.parent_paths[parent_path] = path_id
 
         #         # paths = await asyncio.wait_for(
         #         #     self.client.path_to_id(
-        #         #         os.path.join(parent_path, data['title']), True), timeout=10000)
+        #         #         os.path.join(parent_path, data['title']), True), timeout=timeout_time)
         #         # path_id = paths[len(paths) - 1].get("id", None)
 
         #         log.info("pikpak 开启离线下载：{}".format(data["magnet"], ))
@@ -151,7 +152,7 @@ class PikPak:
         #             path_id,
         #             data['title'],
         #         )
-        #         result = await asyncio.wait_for(task, timeout=10000)
+        #         result = await asyncio.wait_for(task, timeout=timeout_time)
 
         #         log.info("pikpak 保存中：{} 保存路径：{} \n 离线任务：{}".format(
         #             data["title"], os.path.join(parent_path, data['title']), result))
