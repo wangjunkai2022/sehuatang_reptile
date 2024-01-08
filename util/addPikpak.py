@@ -12,7 +12,6 @@ checkCount = 10
 
 timeout_time = 5
 
-
 class PikPak:
     client = PikPakApi(pikpak_username, pikpak_pw,
                        proxy_enable and proxy_url or None)
@@ -117,14 +116,10 @@ class PikPak:
             log.error("pikpak 登陆失败")
             return
 
-        # tasks = [
-        #     self.download(data, fid) for data in datas
-        # ]
-        # results = await deletime_tasks(tasks)
-        results = []
-        for data in datas:
-            result = await self.download(data, fid)
-            results.append(result)
+        tasks = [
+            self.download(data, fid) for data in datas
+        ]
+        results = await deletime_tasks(tasks)
         for data in results:
             if data:
                 datas.remove(data)
