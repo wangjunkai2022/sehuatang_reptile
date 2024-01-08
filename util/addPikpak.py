@@ -12,6 +12,7 @@ checkCount = 10
 
 timeout_time = 5
 
+
 class PikPak:
     client = PikPakApi(pikpak_username, pikpak_pw,
                        proxy_enable and proxy_url or None)
@@ -62,10 +63,10 @@ class PikPak:
             await self.await_parent_path(parent_path)
 
             title = "{}___{}".format(data['number'], data['title'])
-
+            title.replace(" ", "-")
             # 最终保存位置
-            seave_path = os.path.join(parent_path, title)
-
+            # seave_path = os.path.join(parent_path, title)
+            seave_path = parent_path
             path_id = await self.get_path_id(seave_path)
             # paths = await asyncio.wait_for(
             #     self.client.path_to_id(
