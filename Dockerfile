@@ -1,4 +1,4 @@
-FROM mysql:8.0-debian as build
+FROM mysql:8.0.35-debian as build
 ENV MYSQL_ROOT_PASSWORD=root
 RUN \
     apt-get -y update && apt-get -y upgrade \
