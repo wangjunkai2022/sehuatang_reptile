@@ -86,7 +86,8 @@ pikpak:
   password: poi098
   # username: nawiney632@vip4e.com # 邀请码 98105081
   # password: 098poi
-
+  pathclassification: true
+  
 # 定时任务
 schedule_time:
   - "11:00"

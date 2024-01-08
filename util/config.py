@@ -56,6 +56,7 @@ pikpak = get_config('pikpak')
 pikpak_enable = pikpak.get("enable")
 pikpak_username = pikpak.get("username")
 pikpak_pw = pikpak.get("password")
+pikpak_path_class = pikpak.get("pathclassification")
 
 deletime = get_config('deletime')
 deletime_enable = deletime.get('enable')

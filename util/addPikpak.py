@@ -3,9 +3,11 @@ import os
 from pikpakapi import PikPakApi, DownloadStatus
 import asyncio
 from util.log_util import log
-from util.config import date, pikpak_enable, pikpak_username, pikpak_pw, proxy_enable, proxy_url, fid_json
+from util.config import date, pikpak_enable, pikpak_username, pikpak_pw, pikpak_path_class, proxy_enable, proxy_url, \
+    fid_json
 
 from util.async_util import *
+
 checkCount = 10
 
 
@@ -38,19 +40,22 @@ class PikPak:
                 await asyncio.sleep(1)
                 await self.await_parent_path(path)
             return
-        
+
         self.parent_state[path] = DownloadStatus.downloading
         await self.get_path_id(path)
         self.parent_state[path] = DownloadStatus.done
 
     async def download(self, data, fid):
         try:
-            parent_path = os.path.join(
-                "sehuatang", fid_json.get(fid, "other"))
-            if data.get('type_name'):
-                parent_path = os.path.join(parent_path, data['type_name'])
-            if '[无码破解]' in data['title']:
-                parent_path = os.path.join(parent_path, "无码破解")
+            if pikpak_path_class:
+                parent_path = os.path.join(
+                    "sehuatang", fid_json.get(fid, "other"))
+                if data.get('type_name'):
+                    parent_path = os.path.join(parent_path, data['type_name'])
+                if '[无码破解]' in data['title']:
+                    parent_path = os.path.join(parent_path, "无码破解")
+            else:
+                parent_path = "sehuatang"
 
             # 等待公共的父路径创建好
             await self.await_parent_path(parent_path)
