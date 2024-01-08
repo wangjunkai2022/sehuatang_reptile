@@ -74,12 +74,12 @@ sendMessage:
   # 接收的用户，多个用户用|分隔(如: use1|user2|user3)
   to_user: "@all"
   # telegram 推送
-  send_telegram_enable: true
+  send_telegram_enable: false
   tg_bot_token: 6526758014:AAHbkjS6ns9VvHwOiKE-Jzz2ldQ_GWP10pk
   tg_chat_id: 5469426795
 
 pikpak:
-  enable: false
+  enable: true
   #  username: 'xiaokaiunity2022@outlook.com'
   #  password: 'Xiaokai2022'
   username: himiren433@picvw.com # 邀请码 85147854

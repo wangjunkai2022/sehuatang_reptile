@@ -17,16 +17,31 @@ class PikPak:
 
     async def get_path_id(self, parent_path):
         try:
-            paths = await asyncio.wait_for(self.client.path_to_id(parent_path, True), timeout=10000)
+            paths = await asyncio.wait_for(self.client.path_to_id(parent_path, True), timeout=50000)
             path_id = paths[len(paths) - 1].get("id", None)
             return path_id
         except:
-            count = self.get_path_id_count[parent_path] or 0
+            count = self.get_path_id_count.get(parent_path, 0)
             self.get_path_id_count[parent_path] = count + 1
-            # if count > checkCount:
-            #     raise Exception('已经重复获取path_id{}次'.format(checkCount))
-            await asyncio.sleep(3)
+            if count > checkCount:
+                raise Exception('已经重复获取path_id{}次'.format(checkCount))
+            await asyncio.sleep(1)
             return await self.get_path_id(parent_path)
+
+    parent_state = {}
+
+    async def await_parent_path(self, path):
+        parentState = self.parent_state.get(path, None)
+        if parentState:
+            if parentState == DownloadStatus.downloading:
+                log.info("等待父文件{}创建完成".format(path))
+                await asyncio.sleep(1)
+                await self.await_parent_path(path)
+            return
+        
+        self.parent_state[path] = DownloadStatus.downloading
+        await self.get_path_id(path)
+        self.parent_state[path] = DownloadStatus.done
 
     async def download(self, data, fid):
         try:
@@ -37,7 +52,11 @@ class PikPak:
             if '[无码破解]' in data['title']:
                 parent_path = os.path.join(parent_path, "无码破解")
 
+            # 等待公共的父路径创建好
+            await self.await_parent_path(parent_path)
+
             title = "{}___{}".format(data['number'], data['title'])
+
             # 最终保存位置
             seave_path = os.path.join(parent_path, title)
 
