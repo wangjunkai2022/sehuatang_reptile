@@ -5,7 +5,7 @@ mongodb:
   connection_string: "mongodb+srv://"
   use_conn_str: false
 mysql:
-  enable: false
+  enable: true
   #  host: sht_mysql
   host: localhost
   #  host: 172.29.108.52
@@ -20,23 +20,22 @@ sehuatang:
   cookie: "cPNj_2132_saltkey=jPh8px1f; _safe=vqd37pjm4p5uodq339yzk6b7jdt6oich"
   # 板块id
   fid:
-    103: 高清中文字幕
-    #    104: 素人有码系列
-    #    37: 亚洲有码原创
-    # 36: 亚洲无码原创
-    #    39: 动漫原创
-    #    160: vr
-    #    151: 4k
-    #    2: 国产原创
-    #    38: 欧美无码
-    # 107: 三级写真
-  #    152: 韩国主播
+#    103: 高清中文字幕
+#    104: 素人有码系列
+#    37: 亚洲有码原创
+    36: 亚洲无码原创
+#    39: 动漫原创
+#    160: vr
+#    151: 4k
+#    2: 国产原创
+#    38: 欧美无码
+#      107: 三级写真
+#    152: 韩国主播
 
   #  更具标签再次筛选
   typeid:
     103:
       481: 无码高清
-      # 480: 有码高清
 
 
   # 抓取页数，10代表page_start-10 + page_start页
@@ -50,9 +49,9 @@ sehuatang:
 deletime:
   enable: true
   # 多少个后等待
-  num: 100
+  num: 30
   # 等待的时间
-  time: 0.5
+  time: 1
 
 proxy:
   # 代理服务器
@@ -79,15 +78,20 @@ sendMessage:
   tg_chat_id: 5469426795
 
 pikpak:
+  pathclassification: true
   enable: true
   #  username: 'xiaokaiunity2022@outlook.com'
   #  password: 'Xiaokai2022'
-  username: himiren433@picvw.com # 邀请码 85147854
-  password: poi098
+
+  # username: himiren433@picvw.com # 邀请码 85147854
+  # password: poi098
+
   # username: nawiney632@vip4e.com # 邀请码 98105081
   # password: 098poi
-  pathclassification: true
-  
+
+  username: basolep882@telvetto.com # 邀请码 34773783
+  password: 098poi
+
 # 定时任务
 schedule_time:
   - "11:00"

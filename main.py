@@ -29,6 +29,7 @@ from util.config import (
 from util.addPikpak import PikPak
 from util.async_util import *
 
+
 class SeHuaData:
     number = None
     title = None
@@ -39,10 +40,10 @@ class SeHuaData:
 
 
 async def get_plate_info_main(fid: int, page: int, proxy: str, date_tim):
-    if typeids.get(fid, None):
+    if typeids and typeids.get(fid, None):
         keys = [key for key in typeids[fid]]
         tasks = [*(get_plate_info(fid, page, proxy, date_tim, type_id)
-                 for type_id in keys)]
+                   for type_id in keys)]
         # for type_id in keys:
         #     info_list_, tid_list_ = await get_plate_info(fid, page, proxy, date_tim, type_id)
         #     info_list = info_list + info_list_
@@ -201,6 +202,7 @@ async def get_page(tid, proxy, f_info):
     except Exception as e:
         log.error("Crawl the page " + tid + " failed.")
         log.error(e)
+
 
 async def crawler(fid):
     start_time = time.time()
