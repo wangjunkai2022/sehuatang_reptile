@@ -37,9 +37,11 @@ sehuatang:
     103:
       481: 无码高清
 
+  exclude:
+    - "破解"
 
   # 抓取页数，10代表page_start-10 + page_start页
-  page_num: 1
+  page_num: 10
   # 抓取开始页数，如果为空则是第一页开始 不能设置小于等于0
   page_start: 1
   # 抓取日期(格式: yyyy-mm-dd), 如果为空, 则抓取当前日期，支持正则匹配，可输入 yyyy-mm 抓取指定月份的所有日期
@@ -96,10 +98,16 @@ pikpak:
   # SukebeiEnyo合集一
   # ⛓ 链接 • https://mypikpak.com/s/VNTS5lxi8GICdZuOHFMs6v62o1
   # 💿 大小 • 7.39 TB
-  username: vepahe1532@roborena.com # 邀请码 74553676
+  
+  
+  # username: vepahe1532@roborena.com # 邀请码 74553676
   
   # username: weyel44478@namewok.com # 邀请码 92196679
 
+  # 色花糖 亚洲无码原创
+  username: lopipi9801@giratex.com # 邀请码 39576161
+  password: 098poi
+  
 # 定时任务
 schedule_time:
   - "11:00"

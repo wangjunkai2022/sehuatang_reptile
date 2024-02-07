@@ -24,6 +24,7 @@ from util.config import (
     deletime_enable,
     deletime_num,
     deletime_time,
+    exclude,
 )
 
 from util.addPikpak import PikPak
@@ -158,6 +159,9 @@ async def get_page(tid, proxy, f_info):
         soup = bs4.BeautifulSoup(response.text, "html.parser")
         # 获取帖子的标题
         title = soup.find("h1", class_="ts").find("span").get_text()
+        for exc in exclude:
+            if exc in title:
+                raise Exception(f"排除文件{title} 包含{exc}")
         # 楼主发布的内容
         info = soup.find("td", class_="t_f")
 

@@ -26,6 +26,8 @@ page_start = get_config('page_start') or 1
 
 typeids = get_config('typeid')
 
+exclude = get_config('exclude') or []
+
 proxy = get_config('proxy')
 proxy_url = proxy.get('proxy_url')
 proxy_enable = proxy.get('proxy_enable')
