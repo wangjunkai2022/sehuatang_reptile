@@ -144,7 +144,7 @@ async def get_page(tid, proxy, f_info):
     :param proxy: 代理服务器地址
     :param f_info: 帖子信息
     """
-
+    tid = str(tid)
     data = {}
     url = "https://{}/?mod=viewthread&tid={}".format(domain, tid)
     # headers
@@ -294,6 +294,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    # asyncio.run(main())
     # while True:
     #     pass;
+    asyncio.run(get_page(961102, None, None))
