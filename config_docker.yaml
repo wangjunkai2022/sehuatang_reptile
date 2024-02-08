@@ -20,17 +20,17 @@ sehuatang:
   cookie: "cPNj_2132_saltkey=jPh8px1f; _safe=vqd37pjm4p5uodq339yzk6b7jdt6oich"
   # 板块id
   fid:
-#    103: 高清中文字幕
-#    104: 素人有码系列
-#    37: 亚洲有码原创
+    #    103: 高清中文字幕
+    #    104: 素人有码系列
+    #    37: 亚洲有码原创
     36: 亚洲无码原创
-#    39: 动漫原创
-#    160: vr
-#    151: 4k
-#    2: 国产原创
-#    38: 欧美无码
-#      107: 三级写真
-#    152: 韩国主播
+  #    39: 动漫原创
+  #    160: vr
+  #    151: 4k
+  #    2: 国产原创
+  #    38: 欧美无码
+  #      107: 三级写真
+  #    152: 韩国主播
 
   #  更具标签再次筛选
   typeid:
@@ -82,7 +82,8 @@ sendMessage:
 pikpak:
   pathclassification: false
   enable: true
-  
+
+  # 色花糖 一
   # username: himiren433@picvw.com # 邀请码 85147854
   # password: poi098
 
@@ -98,16 +99,15 @@ pikpak:
   # SukebeiEnyo合集一
   # ⛓ 链接 • https://mypikpak.com/s/VNTS5lxi8GICdZuOHFMs6v62o1
   # 💿 大小 • 7.39 TB
-  
-  
   # username: vepahe1532@roborena.com # 邀请码 74553676
-  
+
+  # 色花堂 三级
   # username: weyel44478@namewok.com # 邀请码 92196679
 
-  # 色花糖 亚洲无码原创
+  # 色花糖 亚洲无码原创 无破解
   username: lopipi9801@giratex.com # 邀请码 39576161
   password: 098poi
-  
+
 # 定时任务
 schedule_time:
   - "11:00"

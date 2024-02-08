@@ -138,11 +138,12 @@ async def get_plate_info(fid: int, page: int, proxy: str, date_time, typeid: int
 
 
 # 访问每个帖子的页面
-async def get_page(tid, proxy, f_info):
+async def get_page(tid, proxy, f_info, retry=0):
     """
     :param tid: 帖子id
     :param proxy: 代理服务器地址
     :param f_info: 帖子信息
+    :param retry: 当前重试次数
     """
     tid = str(tid)
     data = {}
@@ -200,12 +201,16 @@ async def get_page(tid, proxy, f_info):
         data["magnet_115"] = magnet_115
         data["file_size"] = file_size
         data['url'] = url
-        log.debug("Crawl the page " + tid)
+        log.debug(f"Crawl the page {tid}")
         log.debug(data.values())
         return data, f_info
     except Exception as e:
         log.error("Crawl the page " + tid + " failed.")
         log.error(e)
+        if 'object has no attribute' in e:
+            if retry <= 10:
+                await asyncio.sleep(3)
+                return await get_page(tid, proxy, f_info, retry=(retry + 1))
 
 
 async def crawler(fid):
@@ -297,4 +302,4 @@ if __name__ == "__main__":
     # asyncio.run(main())
     # while True:
     #     pass;
-    asyncio.run(get_page(961102, None, None))
+    asyncio.run(get_page(778060, None, None))
